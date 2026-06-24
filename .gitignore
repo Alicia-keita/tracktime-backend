@@ -1,0 +1,16 @@
+*.pyc
+__pycache__/
+*.py[cod]
+db.sqlite3
+.env
+*.log
+dump.rdb
+redis-bin/
+staticfiles/
+venv/
+.venv/
+env/
+.idea/
+.vscode/
+*.swp
+*.swo

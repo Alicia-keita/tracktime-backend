@@ -1,0 +1,68 @@
+-- Script à exécuter DANS LA BASE DE DONNÉES "Pointage"
+-- Assurez-vous que le Query Tool montre "Pointage" comme base de données
+
+-- Table des employes
+CREATE TABLE core_employe (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    matricule VARCHAR(20) NOT NULL UNIQUE,
+    nom VARCHAR(100) NOT NULL,
+    prenom VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telephone VARCHAR(20),
+    date_embauche DATE NOT NULL,
+    salaire_base DECIMAL(10,2) NOT NULL,
+    departement VARCHAR(50),
+    poste VARCHAR(50),
+    statut VARCHAR(20) NOT NULL,
+    actif BOOLEAN NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Table des pointages
+CREATE TABLE core_pointage (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    employe_id BIGINT NOT NULL,
+    date_pointage DATE NOT NULL,
+    heure_entree TIMESTAMP,
+    heure_sortie TIMESTAMP,
+    type_pointage VARCHAR(20) NOT NULL,
+    statut VARCHAR(20) NOT NULL,
+    retard_minutes INTEGER DEFAULT 0,
+    commentaire TEXT,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    FOREIGN KEY (employe_id) REFERENCES core_employe(id)
+);
+
+-- Table des utilisateurs Django
+CREATE TABLE users_user (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    password VARCHAR(128) NOT NULL,
+    last_login TIMESTAMP,
+    is_superuser BOOLEAN NOT NULL,
+    username VARCHAR(150) NOT NULL UNIQUE,
+    first_name VARCHAR(150) NOT NULL,
+    last_name VARCHAR(150) NOT NULL,
+    email VARCHAR(254) NOT NULL,
+    is_staff BOOLEAN NOT NULL,
+    is_active BOOLEAN NOT NULL,
+    date_joined TIMESTAMP NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    telephone VARCHAR(20),
+    adresse TEXT,
+    date_embauche DATE,
+    salaire_base DECIMAL(10,2),
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+-- Tables système Django
+CREATE TABLE django_migrations (
+    id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    app VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    applied TIMESTAMP NOT NULL
+);
+
+SELECT 'Tables creees avec succes dans la base Pointage!' AS message;

@@ -1,0 +1,19 @@
+Django>=4.2
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.3
+django-cors-headers>=4.3
+PyMySQL>=1.1
+psycopg2-binary>=2.9
+python-dotenv>=1.0
+paho-mqtt>=1.6
+# Redis & WebSocket
+django-redis>=5.4
+channels>=4.0
+channels-redis>=4.2
+daphne>=4.0
+
+# Deployment
+gunicorn>=21.2.0
+uvicorn[standard]>=0.23.2
+whitenoise>=6.6.0
+dj-database-url>=2.1.0

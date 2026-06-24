@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "Système de Paie API",
+    "description": "API pour gérer les permissions et les bulletins de salaire"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token_rh",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "employee_id",
+      "value": "18",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Login RH",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"rh1\",\n  \"password\": \"password123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/login/",
+          "host": ["{{base_url}}"],
+          "path": ["login", ""]
+        }
+      }
+    },
+    {
+      "name": "2. Générer Bulletin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_rh}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"employee\": {{employee_id}},\n  \"periode_debut\": \"2026-04-01\",\n  \"periode_fin\": \"2026-04-30\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/payrolls/generate/",
+          "host": ["{{base_url}}"],
+          "path": ["payrolls", "generate", ""]
+        }
+      }
+    },
+    {
+      "name": "3. Voir Bulletins",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token_rh}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/payrolls/",
+          "host": ["{{base_url}}"],
+          "path": ["payrolls", ""]
+        }
+      }
+    }
+  ]
+}
