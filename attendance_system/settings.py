@@ -191,37 +191,53 @@ FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 # ====================== REDIS & CACHE ======================
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379/0')
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "IGNORE_EXCEPTIONS": True,  # Si Redis est indisponible, pas de crash
-            "CONNECTION_POOL_KWARGS": {
-                "protocol": 2,  # Requis pour compatibilité avec Redis 3.0.504 (pas de HELLO)
-            }
-        },
-        "TIMEOUT": 30,  # TTL par défaut : 30 secondes
-        "KEY_PREFIX": "tracktime",
+if os.getenv('RENDER') == 'true' and ('127.0.0.1' in REDIS_URL or 'localhost' in REDIS_URL):
+    # En production sur Render, si Redis n'est pas configuré, on utilise le cache en mémoire pour éviter les crashs
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "tracktime-locmem",
+        }
     }
-}
-
-# ====================== DJANGO CHANNELS (WebSocket) ======================
-ASGI_APPLICATION = 'attendance_system.asgi.application'
-
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [
-                {
-                    "address": REDIS_URL,
+    
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        },
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": REDIS_URL,
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "IGNORE_EXCEPTIONS": True,  # Si Redis est indisponible, pas de crash
+                "CONNECTION_POOL_KWARGS": {
                     "protocol": 2,  # Requis pour compatibilité avec Redis 3.0.504 (pas de HELLO)
                 }
-            ],
-            "capacity": 1500,
-            "expiry": 10,
+            },
+            "TIMEOUT": 30,  # TTL par défaut : 30 secondes
+            "KEY_PREFIX": "tracktime",
+        }
+    }
+
+    # ====================== DJANGO CHANNELS (WebSocket) ======================
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    {
+                        "address": REDIS_URL,
+                        "protocol": 2,  # Requis pour compatibilité avec Redis 3.0.504 (pas de HELLO)
+                    }
+                ],
+                "capacity": 1500,
+                "expiry": 10,
+            },
         },
-    },
-}
+    }
+
+ASGI_APPLICATION = 'attendance_system.asgi.application'
+
